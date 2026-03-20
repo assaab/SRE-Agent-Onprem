@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onprem-sre-agent"
+version = "0.1.0"
+description = "Self-hosted incident response control plane for on-prem and hybrid estates."
+requires-python = ">=3.9"
+dependencies = [
+  "fastapi>=0.116.0",
+  "uvicorn[standard]>=0.35.0",
+  "pydantic>=2.11.0",
+  "pydantic-settings>=2.10.0",
+  "httpx>=0.28.0",
+  "redis>=6.4.0",
+  "asyncpg>=0.30.0",
+  "sqlalchemy>=2.0.0",
+  "alembic>=1.16.0",
+  "orjson>=3.11.0",
+  "tenacity>=9.1.0",
+  "opentelemetry-api>=1.37.0",
+  "opentelemetry-sdk>=1.37.0",
+  "opentelemetry-instrumentation-fastapi>=0.58b0",
+  "structlog>=25.4.0",
+  "pyyaml>=6.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4.0",
+  "pytest-asyncio>=1.1.0",
+  "ruff>=0.12.0",
+  "mypy>=1.17.0",
+  "psycopg2-binary>=2.9.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["libs*", "services*", "agents*", "adapters*", "eval*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC"]
+ignore = ["UP007", "UP045"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+    "integration: live LLM and network (requires LLM_API_KEY in .env or environment)",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+explicit_package_bases = true

@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+node_modules/
+dist/
+build/
+*.pyc
+*.pyo
+.DS_Store
+
+# Local secrets (API keys, DSNs) — never commit
+.env
+.env.local
+.env.*.local

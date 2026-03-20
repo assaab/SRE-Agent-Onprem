@@ -1,0 +1,22 @@
+[
+  {
+    "incident_id": "fixture_001",
+    "source": "azure-monitor",
+    "severity": "critical",
+    "service": "checkout-api",
+    "resource": "arc-vm-1",
+    "symptom": "CPU spike and HTTP 5xx error spike",
+    "expected_route": "compute-performance-v1",
+    "expected_actions": ["RestartService", "ScaleWorkload", "RollbackDeployment"]
+  },
+  {
+    "incident_id": "fixture_002",
+    "source": "prometheus",
+    "severity": "warning",
+    "service": "catalog-api",
+    "resource": "k8s-deployment/catalog-api",
+    "symptom": "moderate latency increase",
+    "expected_route": "generic-observability-v1",
+    "expected_actions": ["QueryMetrics", "QueryLogs", "OpenTicket"]
+  }
+]

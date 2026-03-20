@@ -1,0 +1,29 @@
+policyVersion: v1
+defaultMode: review_required
+autonomousEnabled: false
+killSwitch: true
+allowedActions:
+  - QueryMetrics
+  - QueryLogs
+  - GetRecentDeployments
+  - GetTopology
+  - RestartService
+  - ScaleWorkload
+  - RollbackDeployment
+  - DrainNode
+  - OpenTicket
+  - PageHuman
+  - RunAnsibleJob
+deniedActions:
+  - RunShell
+allowedTargetPatterns:
+  - k8s-*
+  - arc-*
+  - k8s/*
+  - arc/*
+  - localhost
+  - local/*
+maxRetriesByAction:
+  RestartService: 1
+  ScaleWorkload: 1
+  RollbackDeployment: 1

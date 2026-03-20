@@ -1,0 +1,17 @@
+policyVersion: v1
+rules:
+  - name: high-risk-writes-require-review
+    when:
+      actionTypeIn:
+        - RollbackDeployment
+        - DrainNode
+        - RunAnsibleJob
+    requireApproval: true
+  - name: low-risk-autonomy-candidates
+    when:
+      actionTypeIn:
+        - RestartService
+        - ScaleWorkload
+      confidenceMin: 0.9
+      blastRadius: single service
+    requireApproval: false

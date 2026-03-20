@@ -1,0 +1,27 @@
+policyVersion: v1
+defaultDeny: true
+roles:
+  triage-agent:
+    filesystem:
+      read: []
+      write: []
+    network:
+      allow:
+        - observability.internal.local
+  evidence-agent:
+    filesystem:
+      read: []
+      write: []
+    network:
+      allow:
+        - observability.internal.local
+        - logs.internal.local
+  execution-agent:
+    filesystem:
+      read:
+        - /runbooks
+      write: []
+    network:
+      allow:
+        - kube-api.internal.local
+        - ansible.internal.local
