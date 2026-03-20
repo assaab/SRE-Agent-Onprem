@@ -18,6 +18,33 @@ Self-hosted incident response control plane for on-prem and hybrid estates. It c
 - **Web console** (Vite + React) with dev proxies to backends
 - **Observability**: OTEL-ready services; local collector config under `onprem-sre-agent/k8s/dev/`
 
+## Agentic flow
+
+Production agent stacks often fail in **coordination**, not retrieval: too many tools in one agent, split agents that disagree, sequential handoffs that add latency and drop context, or a single tool registry that becomes a bottleneck. This project follows a **routing + shared state + gated execution** model (the same ideas behind NVIDIA **NemoClaw**-style routing and shared memory): the **router** picks the next workflow and tool plan per incident, every phase reads and writes the **same incident record**, and **policy / approval** separate decisions from side effects.
+
+```mermaid
+flowchart TB
+  ingress[Ingress] --> router[Router]
+  router --> triage[Triage]
+  router --> evidence[Evidence]
+  router --> change[Change correlation]
+  router --> rca[RCA]
+  router --> planner[Planner]
+  triage & evidence & change & rca & planner --> store[(Incident store + audit)]
+  store --> wm[(Working memory / Redis)]
+  router --> store
+  planner --> policy[Policy engine]
+  policy --> approval[Approval API]
+```
+
+| Principle | In this repo |
+|-----------|----------------|
+| **Routing instead of static tool ownership** | `services.router` chooses `next_workflow` and a focused tool plan per step (LLM-assisted hybrid router in `hybrid_router.py`), instead of one monolithic tool dump or fixed agent silos. |
+| **Shared memory instead of fragile handoff chains** | `IncidentRecord` in the **incident store** is the source of truth; **Redis hot state / working memory** indexes snippets so agents share context without re-serializing private chat history. |
+| **Decoupled reasoning and execution** | Agents and the router **decide**; the **policy engine** and **approval API** **execute** or block privileged actions, reducing premature or unsafe tool use. |
+
+Scale and complexity land on **stable coordination** (router loop, persisted incident graph, audits) rather than on a single overloaded agent or a brittle handoff pipeline.
+
 ## Repository layout
 
 ```
@@ -146,12 +173,4 @@ Integration-style tests may require `LLM_API_KEY` and network; see `pyproject.to
 
 Sample collector config: `onprem-sre-agent/k8s/dev/otel-config.yaml` (mounted by `docker-compose.dev.yml` for local dev).
 
-## Contributing
 
-1. Run `make lint` and `make typecheck` before opening a PR.
-2. Add or update tests for behavioral changes.
-3. Do not commit `.env` or live secrets; use `.env.example` with placeholders only.
-
-## License
-
-Specify your license here (for example add a `LICENSE` file in this repo).
